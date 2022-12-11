@@ -38,7 +38,7 @@ class HTMLPurifier_HTMLModule_Tidy extends HTMLPurifier_HTMLModule
     public function setup($config) {
         
         // create fixes, initialize fixesForLevel
-        $fixes = $this->makeFixes();
+        $this->makeFixes();
         $this->makeFixesForLevel($fixes);
         
         // figure out which fixes to use
