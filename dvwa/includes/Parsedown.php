@@ -171,15 +171,16 @@ class Parsedown
 
         foreach ($lines as $line)
         {
+
+            if (chop($line) === '' and isset($CurrentBlock))
+            {
+                $CurrentBlock['interrupted'] = (isset($CurrentBlock['interrupted'])
+                    ? $CurrentBlock['interrupted'] + 1 : 1
+                );
+            }
+            
             if (chop($line) === '')
             {
-                if (isset($CurrentBlock))
-                {
-                    $CurrentBlock['interrupted'] = (isset($CurrentBlock['interrupted'])
-                        ? $CurrentBlock['interrupted'] + 1 : 1
-                    );
-                }
-
                 continue;
             }
 
@@ -203,25 +204,24 @@ class Parsedown
 
             # ~
 
-            if (isset($CurrentBlock['continuable']))
+            if (isset($CurrentBlock['continuable']) and isset($Block))
             {
                 $methodName = 'block' . $CurrentBlock['type'] . 'Continue';
                 $Block = $this->$methodName($Line, $CurrentBlock);
-
-                if (isset($Block))
-                {
-                    $CurrentBlock = $Block;
-
-                    continue;
-                }
-                else
-                {
-                    if ($this->isBlockCompletable($CurrentBlock['type']))
-                    {
-                        $methodName = 'block' . $CurrentBlock['type'] . 'Complete';
-                        $CurrentBlock = $this->$methodName($CurrentBlock);
-                    }
-                }
+                $CurrentBlock = $Block;
+                continue;
+            }
+            else if(isset($CurrentBlock['continuable']) and $this->isBlockCompletable($CurrentBlock['type']))
+            {
+                $methodName = 'block' . $CurrentBlock['type'] . 'Continue';
+                $Block = $this->$methodName($Line, $CurrentBlock);
+                $methodName = 'block' . $CurrentBlock['type'] . 'Complete';
+                $CurrentBlock = $this->$methodName($CurrentBlock);
+            }
+            else if (isset($CurrentBlock['continuable']))
+            {
+                $methodName = 'block' . $CurrentBlock['type'] . 'Continue';
+                $Block = $this->$methodName($Line, $CurrentBlock);
             }
 
             # ~
@@ -251,16 +251,18 @@ class Parsedown
                 {
                     $Block['type'] = $blockType;
 
-                    if ( ! isset($Block['identified']))
+                    if ( ! isset($Block['identified']) and isset($CurrentBlock))
                     {
-                        if (isset($CurrentBlock))
-                        {
-                            $Elements[] = $this->extractElement($CurrentBlock);
-                        }
+                        $Elements[] = $this->extractElement($CurrentBlock);
 
                         $Block['identified'] = true;
                     }
+                    else if (! isset($Block['identified']))
+                    {
+                        $Block['identified'] = true;
+                    }
 
+                    
                     if ($this->isBlockContinuable($blockType))
                     {
                         $Block['continuable'] = true;
@@ -283,13 +285,16 @@ class Parsedown
             {
                 $CurrentBlock = $Block;
             }
+            else if (isset($CurrentBlock))
+            {
+                $Elements[] = $this->extractElement($CurrentBlock);
+                
+                $CurrentBlock = $this->paragraph($Line);
+
+                $CurrentBlock['identified'] = true;
+            }
             else
             {
-                if (isset($CurrentBlock))
-                {
-                    $Elements[] = $this->extractElement($CurrentBlock);
-                }
-
                 $CurrentBlock = $this->paragraph($Line);
 
                 $CurrentBlock['identified'] = true;
