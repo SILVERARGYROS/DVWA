@@ -261,7 +261,6 @@ class Parsedown
                 $CurrentBlock = $Block;
 
                 continue 2;
-            
             }
 
             # ~
