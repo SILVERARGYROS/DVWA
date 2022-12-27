@@ -412,7 +412,7 @@ function dvwaSourceHtmlEcho( $pPage ) {
 	Header( 'Content-Type: text/html;charset=utf-8' );     // TODO- proper XHTML headers...
 	Header( 'Expires: Tue, 23 Jun 2009 12:00:00 GMT' );    // Date in the past
 
-	echo "<!DOCTYPE html>
+	$message = "<!DOCTYPE html>
 
 <html lang=\"en-GB\">
 
@@ -439,6 +439,8 @@ function dvwaSourceHtmlEcho( $pPage ) {
 	</body>
 
 </html>";
+	$safemessage = htmlspecialchars($message);
+	echo $safemessage;
 }
 
 // To be used on all external links --
