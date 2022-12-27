@@ -257,12 +257,12 @@ class Parsedown
             $CurrentBlock = $this->$methodName($CurrentBlock);
         }
 
-        # ~
+        # ~ 
         $Elements[] = isset($CurrentBlock) ? $this->extractElement($CurrentBlock) : null;
 
         # ~
 
-        return $Elements;
+        return $Elements; #return statement
     }
 
     protected function foo(&$Elements, &$CurrentBlock, &$blockTypes, &$this)
