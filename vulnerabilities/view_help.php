@@ -11,9 +11,9 @@ $page[ 'title' ] = 'Help' . $page[ 'title_separator' ].$page[ 'title' ];
 if (array_key_exists ("id", $_GET) &&
 	array_key_exists ("security", $_GET) &&
 	array_key_exists ("locale", $_GET)) {
-	$id       = $_GET[ 'id' ];
-	$security = $_GET[ 'security' ];
-	$locale = $_GET[ 'locale' ];
+	$id       = (int) $_GET[ 'id' ];
+	$security = (int) $_GET[ 'security' ];
+	$locale = (int) $_GET[ 'locale' ];
 
 	ob_start();
 	if ($locale == 'en') {
