@@ -2,7 +2,7 @@
 
 if( isset( $_REQUEST[ 'Submit' ] ) ) {
 	// Get input
-	$id = $_REQUEST[ 'id' ];
+	$id = escapeshellarg($_REQUEST[ 'id' ]);
 
 	switch ($_DVWA['SQLI_DB']) {
 		case MYSQL:
