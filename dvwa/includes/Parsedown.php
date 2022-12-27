@@ -228,40 +228,7 @@ class Parsedown
 
             $blockTypes = $this->unmarkedBlockTypes;
 
-            if (isset($this->BlockTypes[$marker]))
-            {
-                foreach ($this->BlockTypes[$marker] as $blockType)
-                {
-                    $blockTypes []= $blockType;
-                }
-            }
-
-            #
-            # ~
-
-            foreach ($blockTypes as $blockType)
-            {
-                $Block = $this->{"block$blockType"}($Line, $CurrentBlock);
-
-                if (isset($Block) and  ! isset($Block['identified']))
-                {
-                    $Block['type'] = $blockType;
-
-                    $Elements[] = isset($CurrentBlock) ? $this->extractElement($CurrentBlock) : null;
-
-                    $Block['identified'] = true;
-                }
-
-                if (isset($Block) and $this->isBlockContinuable($blockType))
-                {
-                    $Block['type'] = $blockType;
-                    $Block['continuable'] = true;
-                }
-
-                $CurrentBlock = $Block;
-
-                continue 2;
-            }
+           foo2(&$Elements, &$CurrentBlock, &$blockTypes, &$this);
 
             # ~
 
@@ -296,6 +263,44 @@ class Parsedown
         # ~
 
         return $Elements;
+    }
+
+    protected function foo(&$Elements, &$CurrentBlock, &$blockTypes, &$this)
+    {
+        if (isset($this->BlockTypes[$marker]))
+        {
+            foreach ($this->BlockTypes[$marker] as $blockType)
+            {
+                $blockTypes []= $blockType;
+            }
+        }
+
+        #
+        # ~
+
+        foreach ($blockTypes as $blockType)
+        {
+            $Block = $this->{"block$blockType"}($Line, $CurrentBlock);
+
+            if (isset($Block) and  ! isset($Block['identified']))
+            {
+                $Block['type'] = $blockType;
+
+                $Elements[] = isset($CurrentBlock) ? $this->extractElement($CurrentBlock) : null;
+
+                $Block['identified'] = true;
+            }
+
+            if (isset($Block) and $this->isBlockContinuable($blockType))
+            {
+                $Block['type'] = $blockType;
+                $Block['continuable'] = true;
+            }
+
+            $CurrentBlock = $Block;
+
+            continue 2;
+        }
     }
 
     protected function extractElement(array $Component)
